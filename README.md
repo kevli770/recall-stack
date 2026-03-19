@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-compatible-blueviolet?style=flat&logo=anthropic)](https://docs.anthropic.com/en/docs/claude-code)
-[![Hindsight](https://img.shields.io/badge/Hindsight-v0.4.19-00ADD8?style=flat)](https://github.com/vectorize-io/hindsight)
+[![Hindsight](https://img.shields.io/badge/Hindsight-compatible-00ADD8?style=flat)](https://github.com/vectorize-io/hindsight)
 ![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
 ![Docker](https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white)
 

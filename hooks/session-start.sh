@@ -35,10 +35,10 @@ RECALL_JSON=$(curl -sf -X POST "$HINDSIGHT_URL/v1/default/banks/claude-sessions/
   2>/dev/null)
 
 if [ -n "$RECALL_JSON" ] && [ "$RECALL_JSON" != "null" ]; then
-  PATTERNS=$(python3 -c "
+  PATTERNS=$(echo "$RECALL_JSON" | python3 -c "
 import sys, json
 try:
-    data = json.loads(sys.argv[1])
+    data = json.load(sys.stdin)
     seen = set()
     for r in data.get('results', []):
         t = r.get('text', '')
@@ -46,7 +46,7 @@ try:
             seen.add(t)
             print(f'- {t}')
 except: pass
-" "$RECALL_JSON" 2>/dev/null)
+" 2>/dev/null)
 
   if [ -n "$PATTERNS" ]; then
     echo "### Hindsight Behavioral Patterns"
