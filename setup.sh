@@ -1,5 +1,5 @@
 #!/bin/bash
-# One-command setup for the 5-layer Claude Code memory architecture
+# One-command setup for the recall-stack memory architecture
 # Usage: bash setup.sh [--obsidian /path/to/vault]
 
 set -e
@@ -12,7 +12,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-echo "Setting up 5-layer Claude Code memory architecture..."
+echo "Setting up recall-stack memory architecture..."
 
 # --- Layer 1: CLAUDE.md ---
 mkdir -p ~/.claude
@@ -35,20 +35,38 @@ fi
 mkdir -p ~/.claude/hooks
 cp hooks/session-start.sh ~/.claude/hooks/session-start.sh
 cp hooks/session-end.sh ~/.claude/hooks/session-end.sh
-chmod +x ~/.claude/hooks/session-start.sh ~/.claude/hooks/session-end.sh
-echo "[+] Layer 3+4: Hooks installed"
+cp hooks/post-compact.sh ~/.claude/hooks/post-compact.sh
+cp hooks/pre-action-gate.sh ~/.claude/hooks/pre-action-gate.sh
+chmod +x ~/.claude/hooks/*.sh
+echo "[+] Layers 3+4: Hooks installed (session-start, session-end, post-compact, pre-action-gate)"
 
-# Merge hooks into settings.json
+# --- Gates ---
+if [ ! -f ~/.claude/gates.json ]; then
+  cp gates.json ~/.claude/gates.json
+  echo "[+] Gates: gates.json installed with starter rules"
+else
+  echo "[=] Gates: gates.json already exists (not overwriting)"
+fi
+
+# --- Failures tracker ---
+if [ ! -f ~/.claude/failures.json ]; then
+  echo '{"failures":{}}' > ~/.claude/failures.json
+  echo "[+] Failures: tracker initialized"
+fi
+
+# --- Settings ---
 if [ -f ~/.claude/settings.json ]; then
-  # Check if hooks already configured
   if grep -q "SessionStart" ~/.claude/settings.json 2>/dev/null; then
     echo "[=] Hooks already in settings.json (not overwriting)"
+    if ! grep -q "PreToolUse" ~/.claude/settings.json 2>/dev/null; then
+      echo "[!] New hooks available (PreToolUse, PostCompact). Merge manually from settings.json in this repo."
+    fi
   else
     echo "[!] settings.json exists but has no hooks. Merge manually from settings.json in this repo."
   fi
 else
   cp settings.json ~/.claude/settings.json
-  echo "[+] settings.json installed with hook configuration"
+  echo "[+] settings.json installed with all hook configurations"
 fi
 
 # --- Layer 4: Hindsight ---
@@ -74,7 +92,6 @@ if command -v docker &> /dev/null; then
           -v hindsight-data:/home/hindsight/.pg0 \
           ghcr.io/vectorize-io/hindsight:latest
 
-        # Wait for startup
         echo -n "    Waiting for Hindsight..."
         for i in $(seq 1 30); do
           if curl -sf http://localhost:8888/health > /dev/null 2>&1; then
@@ -85,7 +102,6 @@ if command -v docker &> /dev/null; then
           echo -n "."
         done
 
-        # Create memory bank
         curl -sf -X PUT http://localhost:8888/v1/default/banks/claude-sessions \
           -H 'Content-Type: application/json' \
           -d '{"name": "claude-sessions"}' > /dev/null 2>&1
@@ -100,7 +116,7 @@ if command -v docker &> /dev/null; then
   fi
 else
   echo "[!] Layer 4: Docker not found. Install Docker Desktop for Hindsight."
-  echo "    Layers 1-3 and 5 work without it."
+  echo "    Everything else works without it."
 fi
 
 # --- Layer 5: Obsidian ---
@@ -112,7 +128,7 @@ if [ -n "$OBSIDIAN_VAULT" ]; then
     echo "[=] Layer 5: Claude alias already exists in $SHELL_RC"
   else
     echo "" >> "$SHELL_RC"
-    echo "# Claude Code with Obsidian vault (Layer 5)" >> "$SHELL_RC"
+    echo "# Recall Stack: Claude Code with Obsidian vault (Layer 5)" >> "$SHELL_RC"
     echo "alias claude='claude --add-dir \"$OBSIDIAN_VAULT\"'" >> "$SHELL_RC"
     echo "[+] Layer 5: Obsidian alias added to $SHELL_RC"
   fi
@@ -121,4 +137,4 @@ else
 fi
 
 echo ""
-echo "Done. Open a new terminal and run 'claude' in any git repo to verify."
+echo "Done. Open a new terminal and run 'claude' to start."

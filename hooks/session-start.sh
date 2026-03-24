@@ -29,7 +29,7 @@ if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
 fi
 
 # --- Layer 4: Hindsight recall ---
-RECALL_JSON=$(curl -sf -X POST "$HINDSIGHT_URL/v1/default/banks/claude-sessions/memories/recall" \
+RECALL_JSON=$(curl -sf -m 5 -X POST "$HINDSIGHT_URL/v1/default/banks/claude-sessions/memories/recall" \
   -H 'Content-Type: application/json' \
   -d '{"query": "behavioral patterns, corrections, and preferences for Claude Code sessions"}' \
   2>/dev/null)

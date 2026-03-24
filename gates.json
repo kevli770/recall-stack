@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "description": "Pre-action gates. level: warn (log only) or block (deny tool call). Add your own rules here.",
+  "gates": [
+    {
+      "name": "no-force-push",
+      "tool": "Bash",
+      "pattern": "push.*--force|push.*-f",
+      "level": "block",
+      "message": "Force push blocked. Use regular push or ask first.",
+      "enabled": true
+    },
+    {
+      "name": "no-rm-rf-root",
+      "tool": "Bash",
+      "pattern": "rm\s+-rf\s+/[^r]|rm\s+-rf\s+~",
+      "level": "block",
+      "message": "Destructive rm -rf on root/home blocked.",
+      "enabled": true
+    },
+    {
+      "name": "no-credentials-in-files",
+      "tool": "Write|Edit",
+      "pattern": "sk-ant-|sk-proj-|OPENAI_API_KEY|AWS_SECRET",
+      "level": "block",
+      "message": "Credential/API key detected in file write. Use env vars instead.",
+      "enabled": true
+    },
+    {
+      "name": "no-git-reset-hard",
+      "tool": "Bash",
+      "pattern": "git\s+reset\s+--hard",
+      "level": "warn",
+      "message": "git reset --hard detected. Make sure this is intentional.",
+      "enabled": true
+    }
+  ]
+}
