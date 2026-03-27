@@ -86,7 +86,7 @@ When Claude compacts context mid-session, Layers 3 and 4 (git context + Hindsigh
 ### One-command install
 
 ```bash
-git clone https://github.com/keshavsuki/recall-stack.git
+git clone https://github.com/kevli770/recall-stack.git
 cd recall-stack
 bash setup.sh --obsidian ~/path/to/your/vault
 ```
@@ -363,7 +363,9 @@ Hindsight is free and open source. It uses your LLM API key to process memories.
 
 ## Credits
 
-Built by [@keshavsuki](https://github.com/keshavsuki). Powered by [Hindsight](https://github.com/vectorize-io/hindsight) for behavioral learning.
+Originally created by [@keshavsuki](https://github.com/keshavsuki).
+Forked, adapted, and maintained by [@kevinliaksai](https://github.com/kevli770).
+Powered by [Hindsight](https://github.com/vectorize-io/hindsight) for behavioral learning.
 
 ---
 
